@@ -8,14 +8,23 @@ function SlideShow() {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showButton, setShowButton] = useState(false);
+  const [slideShowStarted, setSlideShowStarted] = useState(false);
+
   const [startTime, setStartTime] = useState(null);
   const [responseTime, setResponseTime] = useState(null);
+
+  const startSlideshow = async () => {
+    setShowButton(false);
+    await delay(1000); // Initial delay before showing the first image
+    setStartTime(Date.now()); // Record the start time when the first image is shown
+    setShowButton(true);
+  };
 
   const changeImage = async () => {
     if (currentImageIndex < imagearray.length - 1) {
       await delay(1000);
-      setShowButton(true);
       setStartTime(Date.now()); // Record the start time when the button is shown
+      setShowButton(true);
     }
   };
 
@@ -26,17 +35,29 @@ function SlideShow() {
     setCurrentImageIndex((prevIndex) => prevIndex + 1);
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      changeImage();
-    }, 1000);
+  const slideShowInit = () => {
+    setSlideShowStarted(true)
+  };
 
-    return () => clearTimeout(timer);
+
+
+  useEffect(() => {
+    console.log(slideShowStarted )
+    console.log(currentImageIndex )
+
+    if (currentImageIndex === 0 && slideShowStarted == true) {
+      startSlideshow();
+    }
+    else if (currentImageIndex !== 0 && slideShowStarted == true){
+      changeImage();
+    }
   }, [currentImageIndex]);
 
   return (
     <div>
-      {showButton ? (
+    {slideShowStarted  ? (
+        <>
+              {showButton ? (
         <button onClick={handleButtonClick}>Next Slide</button>
       ) : (
         <img
@@ -45,10 +66,16 @@ function SlideShow() {
           style={{ width: '500px', height: '500px', margin: '5px' }}
         />
       )}
+        </>
+    ) : (
+        <>        <button onClick={slideShowInit}>start</button>
+        </>
+    )}
 
-      {responseTime !== null && (
-        <p>Response Time: {responseTime} milliseconds</p>
-      )}
+    
+
+
+ 
     </div>
   );
 }
