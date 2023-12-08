@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import imagearray from 'components/Image/Image';
 import questions from "assets/questions.json"
+import API from 'lib/API';
+import { error } from 'console';
 
 function SlideShow() {
+
   const delay = async (ms) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   };
-
-
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showButton, setShowButton] = useState<boolean>(false);
@@ -18,32 +19,58 @@ function SlideShow() {
   const [responseTime, setResponseTime] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question>(null)
   const [showContent, setShowContent] = useState<boolean>(true)
+  
 
+  const [answers, setAnswers] = useState<NewTrialResult[]>([])
+  
 
   const handleButtonClick = async (choice: string) => {
 
-
     var endTime = Date.now()
-
+    
     setResponseTime(endTime - startTime)
+    var chartType = "area"
+
+
+    if (currentImageIndex <= 9 ){
+      chartType = "line"
+    }
+    console.log(choice)
+    const newTrialResult: NewTrialResult = {
+      id: currentImageIndex,
+      chart: chartType,
+      trial: 1,
+      timeTaken: responseTime,
+      answer: choice
+
+    }
+    setAnswers(answers => [...answers, newTrialResult]);
+
+
+
     if (currentImageIndex != questions.length - 1) {
       setShowContent(false)
       delay(1000).then(() => {
+
         setShowContent(true)
-        setStartTime(Date.now())
-        console.log(choice)
-        setCurrentImageIndex((prevIndex) => prevIndex + 1);
+        setStartTime(Date.now())  
+        setCurrentImageIndex((prevIndex: number) => prevIndex + 1);
         setCurrentQuestion(questions[currentImageIndex])
-        
+
       })
     }
 
     else {
-      console.log("Api request")
-      // setSlideShowStarted(false)
-      setShowContent(false)
+      API.sendResult(answers)
+      .then(() => {
+        setShowContent(false);
+        setSlideShowEnded(true);
 
-      setSlideShowEnded(true)
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  
     }
   
   };
@@ -108,11 +135,6 @@ function SlideShow() {
         <p>This slideshow is over thank you </p>
       )}
     
-      
-
- 
-
-
     </>
   );
 }
