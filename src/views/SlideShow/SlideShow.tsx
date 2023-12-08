@@ -59,6 +59,7 @@ function SlideShow() {
     console.log("choice is ", choice)
     console.log("questions is ", chartData.trials[currentImageIndex].question)
     var responseTime = endTime - startTime
+    console.log(chartData.trials[currentImageIndex].chart.datasets[0])
 
     console.log(currentImageIndex)
     const newTrialResult: NewTrialResult = {
@@ -127,7 +128,6 @@ function SlideShow() {
 
 
 
-
   return (
     <>
       {slideShowStarted && chartData ? (
@@ -137,7 +137,7 @@ function SlideShow() {
             <>
 
               <div className='chart'>
-                <Line options={{ responsive: true, scales:{y: {suggestedMin: 0}} }} data={chartData.trials[currentImageIndex].chart}></Line>
+                <Line options={{ responsive: true, scales:{y: {suggestedMin: 0, stacked:chartData.trials[currentImageIndex].chart.datasets[0].fill}} }} data={chartData.trials[currentImageIndex].chart}></Line>
                 
                 <p className='question'>{chartData.trials[currentImageIndex].question}</p>
 
@@ -148,23 +148,22 @@ function SlideShow() {
                     </button>
                   ))}
 
-
                 </div>
-
         
               </div>
               
-
             </>
           ) : (
             <></>
           )}
 
-
         </>
       ) : (
         <>
-          <p>This is a test for information visulization . Do not refresh the page at any point during the test or it will restart</p>
+          <p>This is a test for COMP3736 Information visulization.
+              The results from the test wil be stored by our research group to be used in a study on the effectiveness of Area and Line charts at showing data across ranges
+              No personal data about you or your machine will be stored and your data will not be sold or transfered to any other party outside of the University of Leeds. By click the start button you consent to your answers being stored.
+             Do not refresh the page at any point during the test or it will restart the test and your resutls will not be saved.</p>
           <button className='button' onClick={slideShowInit}>start</button>
         </>
       )
