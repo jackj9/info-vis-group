@@ -1,8 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import imagearray from 'components/Image/Image';
-import questions from "assets/questions.json"
 import API from 'lib/API';
-import { error } from 'console';
+import  "./SlideShow.css"
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Colors,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+ 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Colors
+);
 
 function SlideShow() {
 
@@ -11,57 +33,58 @@ function SlideShow() {
   };
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [showButton, setShowButton] = useState<boolean>(false);
   const [slideShowStarted, setSlideShowStarted] = useState<boolean>(false);
   const [slideShowEnded, setSlideShowEnded] = useState<boolean>(false);
-
   const [startTime, setStartTime] = useState(null);
   const [responseTime, setResponseTime] = useState(null);
-  const [currentQuestion, setCurrentQuestion] = useState<Question>(null)
   const [showContent, setShowContent] = useState<boolean>(true)
-  
-
+  const [chartData, setChartData] = useState<ChartsResponse>(null)
   const [answers, setAnswers] = useState<NewTrialResult[]>([])
   
 
-  const handleButtonClick = async (choice: string) => {
+  const handleButtonClick = async () => {
 
     var endTime = Date.now()
-    
-    setResponseTime(endTime - startTime)
-    var chartType = "area"
 
+    var responseTime = endTime - startTime
+    setResponseTime(responseTime)
+
+    var chartType = "area"
 
     if (currentImageIndex <= 9 ){
       chartType = "line"
     }
-    console.log(choice)
     const newTrialResult: NewTrialResult = {
-      id: currentImageIndex,
+      id: currentImageIndex?.toString(),
       chart: chartType,
-      trial: 1,
-      timeTaken: responseTime,
-      answer: choice
+      trial: "1",
+      timeTaken: responseTime.toString(),
+      answer: "red"
 
     }
     setAnswers(answers => [...answers, newTrialResult]);
 
 
-
-    if (currentImageIndex != questions.length - 1) {
+    if (currentImageIndex != 9) {
       setShowContent(false)
       delay(1000).then(() => {
 
         setShowContent(true)
         setStartTime(Date.now())  
-        setCurrentImageIndex((prevIndex: number) => prevIndex + 1);
-        setCurrentQuestion(questions[currentImageIndex])
+        setCurrentImageIndex((prevIndex: number) => {
+          const newIndex = prevIndex + 1;
+          return newIndex;
+        });
 
       })
     }
 
+
     else {
-      API.sendResult(answers)
+      const newRequest: NewTrialRequest = {
+        data: answers
+      }
+      API.sendResult(newRequest)
       .then(() => {
         setShowContent(false);
         setSlideShowEnded(true);
@@ -72,44 +95,51 @@ function SlideShow() {
       });
   
     }
+
+  };
+
   
+  const slideShowInit = () => {
+    delay(1000)
+      .then(() => {
+        return API.getResult()
+      })
+      .then((apiResult) => {
+        console.log(apiResult);
+        setChartData(apiResult)
+
+      })
+
+      .catch((error) => console.error("Error:", error));
   };
-
-  const slideShowInit = async () => {
-    
-    setSlideShowStarted(true)
-
-    setStartTime(Date.now())
-    await delay(1000); // Initial delay before showing the first image
-
-  };
-
-
+  
+  
   useEffect(() => {
-    setCurrentQuestion(questions[currentImageIndex]);
-  }, [currentImageIndex]);
+    console.log("useeffect")
+    console.log(chartData)
+    setStartTime(Date.now());
+  
+    if (!slideShowStarted) {
+      setSlideShowStarted(true);
+    }
 
+    
+  }, [currentImageIndex]);
+  
 
   return (
     <>
-      {slideShowStarted ? (
+      {slideShowStarted && chartData ? (
         <>
           {showContent ? (
             <>
-              <img
-                src={imagearray[currentImageIndex]}
-                alt=""
-                style={{ width: '500px', height: '500px', margin: '5px' }}
-              />
+              <div className='chart'>
+                <Line  options={{responsive: true}}  data={chartData.lineCharts[currentImageIndex]}></Line>
+                <button className="button" onClick={()=> handleButtonClick()}>red</button>
 
-              <p>{currentQuestion.question}</p>
-              {currentQuestion.choices.map((choice, choiceIndex) => (
+              </div>
+          
 
-                <button key={choiceIndex} onClick={() => handleButtonClick(choice)}>
-                  {choice}
-                </button>
-
-              ))}
               {responseTime !== null && (
                 <p>Response Time: {responseTime} milliseconds</p>
               )}
@@ -127,7 +157,7 @@ function SlideShow() {
         <button onClick={slideShowInit}>start</button>
       </>
       )
-      
+    
       
       }
 
