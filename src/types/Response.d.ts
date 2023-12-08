@@ -36,3 +36,28 @@ interface ChartsResponse {
 interface ChartDataRequest {
     data: number[]
 }
+
+
+
+
+interface ChartDataset  {
+	label: string,
+	data: number, 
+	fill: boolean 
+}
+
+interface Chart  {
+	labels: string[] 
+	datasets: ChartDataset[]
+}
+
+interface Trial  {
+	id: number 
+	question: string 
+	answers: string[] 
+	chart: Chart 
+}
+
+interface ChartsResponse  {
+	trials: Trial[] 
+}
