@@ -4,7 +4,10 @@ const url = "http://172.187.146.140:8080";
 
 
 
-const axiosInstance = axios.create()
+const axiosInstance = axios.create({
+    
+})
+
 
 
 export default class API {
