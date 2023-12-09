@@ -13,10 +13,12 @@ import {
   Legend,
   Colors,
   Filler,
+  defaults,
 } from 'chart.js';
 
 
 import { Line } from 'react-chartjs-2';
+import { boolean } from 'yargs';
 
 ChartJS.register(
   CategoryScale,
@@ -126,6 +128,49 @@ function SlideShow() {
       .catch((error) => console.error("Error:", error));
   };
 
+  // Style options for the Chart component
+  // 'options.scales.y.stacked' sets whether the chart is a line or stacked area chart 
+  const chartOptions = (chartData: ChartsResponse) => {
+    // Determine what type of chart is being displayed
+    // fill: true = stacked area chart
+    // fill: false = line chart
+    const stacked: boolean = chartData.trials[currentImageIndex].chart.datasets[0].fill
+    // Set the font size for all labels in the chart 
+    defaults.font.size = 16 
+    return chartData ? ({
+      options: {
+        defaults: { 
+          font: {
+            size: 20
+          }
+        },
+        responsive: true,
+        scales: {
+          y: {
+            display: !stacked,
+            title: {
+              display: true,
+              text: "Number of medals won",
+              padding: 20,
+            },
+            suggestedMin: 0,
+            stacked: stacked,
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: "Number of Olympic Medals Won"
+          },
+          legend: {
+            display: true,
+            position: "top" as const
+          }
+        },
+
+      }
+    }) : null
+  }
 
 
   return (
@@ -137,7 +182,7 @@ function SlideShow() {
             <>
 
               <div className='chart'>
-                <Line options={{ responsive: true, scales:{y: {suggestedMin: 0, stacked:chartData.trials[currentImageIndex].chart.datasets[0].fill}} }} data={chartData.trials[currentImageIndex].chart}></Line>
+                <Line options={chartOptions(chartData).options} data={chartData.trials[currentImageIndex].chart}></Line>
                 
                 <p className='question'>{chartData.trials[currentImageIndex].question}</p>
 
