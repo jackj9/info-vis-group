@@ -147,7 +147,7 @@ function SlideShow() {
         responsive: true,
         scales: {
           y: {
-            display: !stacked,
+            display: true,
             title: {
               display: true,
               text: "Number of medals won",
@@ -205,16 +205,31 @@ function SlideShow() {
         </>
       ) : (
         <>
-          <p>This is a test for COMP3736 Information visulization.
-              The results from the test wil be stored by our research group to be used in a study on the effectiveness of Area and Line charts at showing data across ranges
-              No personal data about you or your machine will be stored and your data will not be sold or transfered to any other party outside of the University of Leeds. By click the start button you consent to your answers being stored.
-             Do not refresh the page at any point during the test or it will restart the test and your resutls will not be saved.</p>
+          <p>
+            You are participating in a experiment for a group assignment 
+            for COMP3736 Information Visualization. The results from the experiment
+            wil be stored by our research group to be used in a study on comparing 
+            the effectiveness of stacked area and line charts in visualising data.
+          </p>
+          <p>
+            No personal data about you or your machine will be stored, and your 
+            data will not be sold or transfered to any other party outside of the
+            University of Leeds. By clicking the start button you consent to your
+            answers being stored.
+          </p>
+          <p>
+            <b>Do not refresh the page at any point during the test</b> or
+            it will restart the test and your results will not be saved.
+          </p>
           <button className='button' onClick={slideShowInit}>start</button>
         </>
       )
       }
       {slideShowEnded && (
-        <p>This slideshow is over thank you </p>
+        <>
+          <p>The experiment is now complete.</p>
+          <p>Thank you for your participation</p>
+        </>
       )}
 
     </>
