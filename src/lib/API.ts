@@ -24,7 +24,7 @@ export default class API {
 
   static getResult(): Promise<ChartsResponse> {
     
-       return axiosInstance.get<ChartsResponse>(`${url}/charts/test`)
+       return axiosInstance.get<ChartsResponse>(`${url}/charts`)
       .then((response: AxiosResponse) => {
         return response.data;
       })
