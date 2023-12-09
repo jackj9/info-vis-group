@@ -165,6 +165,9 @@ function SlideShow() {
           legend: {
             display: true,
             position: "top" as const
+          },
+          tooltip: {
+            enabled: false,
           }
         },
 
