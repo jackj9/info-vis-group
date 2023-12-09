@@ -92,19 +92,7 @@ function SlideShow() {
 
     else {
       
-      const newRequest: NewTrialRequest = {
-        data: answers
-      }
-      API.sendResult(newRequest)
-        .then(() => {
-          setShowContent(false);
-          setSlideShowEnded(true);
-
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-
+      
     }
 
   };
@@ -127,6 +115,25 @@ function SlideShow() {
 
       .catch((error) => console.error("Error:", error));
   };
+
+  useEffect(() => {
+    if (answers.length === 20) {
+      const newRequest: NewTrialRequest = {
+        data: answers
+      }
+      console.log("request sent: ", newRequest)
+      API.sendResult(newRequest)
+        .then(() => {
+          setShowContent(false);
+          setSlideShowEnded(true);
+
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+
+    }
+  }, [answers])
 
   // Style options for the Chart component
   // 'options.scales.y.stacked' sets whether the chart is a line or stacked area chart 
