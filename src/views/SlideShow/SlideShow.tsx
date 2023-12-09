@@ -180,16 +180,18 @@ function SlideShow() {
           {showContent ? (
             
             <>
-
+              <h1>
+                Trial {currentImageIndex+1} / 20
+              </h1>
               <div className='chart'>
                 <Line options={chartOptions(chartData).options} data={chartData.trials[currentImageIndex].chart}></Line>
                 
                 <p className='question'>{chartData.trials[currentImageIndex].question}</p>
 
                 <div className='buttonGroup'>
-                  {chartData.trials[currentImageIndex].answers.map((value, index) => (
-                    <button key={index} className="button" onClick={() => handleButtonClick(value)}>
-                      {value}
+                  {chartData.trials[currentImageIndex].chart.datasets.map((value, index) => (
+                    <button key={index} className="button" onClick={() => handleButtonClick(value.label)}>
+                      {value.label}
                     </button>
                   ))}
 
