@@ -7,7 +7,7 @@
     align-items: center;
 }
 .question {
-    font-size: 30px;
+    font-size: 1.5em;
 }
 .button {
     padding: 10px 20px; /* Adjust padding as needed for button size */
@@ -31,7 +31,7 @@
 }
 p {
     padding-top: 20px;
-    max-width: 600px; /* Adjust the max-width as per your preference */
+    max-width: 800px; /* Adjust the max-width as per your preference */
     margin: 0 auto;  /* Center the paragraph */
     text-align: justify; /* Justify text for a neat look */
     line-height: 1.5; /* Adjust line height for better readability */
